@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "demo" },
+    "location": { "value": "eastus" },
+    "resourceGroupName": { "value": "rg-fraud-demo-REPLACE" },
+    "uniqueSuffix": { "value": "replace1" },
+    "owner": { "value": "REPLACE" },
+    "expirationDate": { "value": "YYYY-MM-DD" },
+    "additionalTags": { "value": { "costCenter": "student-demo" } },
+    "allowedOrigins": { "value": [] },
+    "postgresAdministratorLogin": { "value": "fraudadmin" },
+    "entraTenantId": { "value": "00000000-0000-0000-0000-000000000000" },
+    "entraApplicationId": { "value": "00000000-0000-0000-0000-000000000000" },
+    "containerImageDigest": { "value": "" },
+    "workerImageDigest": { "value": "" },
+    "deployContainerApp": { "value": false },
+    "deployPipelineJobs": { "value": false },
+    "artifactManifestBlob": { "value": "deployment/artifact-manifest.json" },
+    "artifactManifestSha256": { "value": "" },
+    "stagingRetentionDays": { "value": 30 },
+    "containerRegistrySku": { "value": "Basic" },
+    "containerMinReplicas": { "value": 0 },
+    "containerMaxReplicas": { "value": 1 },
+    "logRetentionDays": { "value": 30 },
+    "postgresSkuName": { "value": "Standard_B1ms" },
+    "postgresStorageGiB": { "value": 32 },
+    "postgresBackupRetentionDays": { "value": 7 },
+    "postgresExtensions": { "value": [] }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "phase11-gate-a-power-bi-connectivity-v1",
+  "postgresql_network_policy": "private-only; never enable public access to bypass gateway or licensing requirements",
+  "live_service_outcome": {
+    "status": "unknown_pending_tenant_capacity_and_license_preflight",
+    "route": "Power BI virtual network data gateway connected to the deployment VNet",
+    "requirements": {
+      "tenant_access": "Power BI/Fabric tenant must permit virtual network data gateways and the PostgreSQL connector.",
+      "workspace_license": "Workspace and report users require an eligible Power BI license.",
+      "capacity": "Workspace must be assigned to eligible Premium or Fabric capacity supporting VNet data gateways.",
+      "gateway_region": "Gateway, workspace capacity, VNet, and PostgreSQL region pairing must be supported; candidate region is unapproved until Gate B.",
+      "subnet": "Use the dedicated power-bi-gateway subnet delegated to Microsoft.PowerPlatform/vnetaccesslinks.",
+      "network_permissions": [
+        "Power Platform VNet access-link permissions on the dedicated subnet",
+        "No network security rule may block PostgreSQL 5432 or required Azure control-plane endpoints",
+        "Private DNS zone private.postgres.database.azure.com must resolve from the gateway subnet"
+      ],
+      "connector": "Power BI PostgreSQL connector with TLS required and the private PostgreSQL FQDN; no IP-address or public-endpoint fallback.",
+      "credential_storage": "Store a least-privilege read-only reporting database credential in the Power BI gateway connection; do not embed it in PBIX, JSON, or source control.",
+      "refresh": "Import mode refresh runs only after a reconciled batch is published; refresh failure preserves the prior dataset and must not expose pending facts.",
+      "capacity_cost": "VNet data gateway consumes Premium/Fabric capacity and is a separately approved licensing/capacity cost category.",
+      "administrator_roles": [
+        "Fabric or Power BI administrator able to authorize VNet gateways",
+        "Capacity administrator",
+        "Workspace administrator",
+        "Azure network contributor limited to the gateway subnet or an equivalent custom role"
+      ]
+    },
+    "gate_b_evidence": [
+      "Named tenant, workspace, license, capacity SKU, capacity region, and administrators",
+      "Created VNet data gateway bound to the dedicated subnet",
+      "Successful private DNS lookup of the PostgreSQL FQDN from the gateway",
+      "Successful TLS PostgreSQL connector test using a read-only reporting user",
+      "Successful Import refresh of all five reporting views",
+      "Published freshness watermark matches reporting_batch_freshness",
+      "Pending transaction facts remain absent after refresh",
+      "Gateway/capacity cost is approved and monitored"
+    ]
+  },
+  "no_capacity_fallback": {
+    "status": "live_power_bi_service_blocked",
+    "allowed": "Power BI Desktop/local demonstration only when the workstation has an approved secure route to private PostgreSQL.",
+    "prohibited": [
+      "Making PostgreSQL public",
+      "Adding a broad firewall allow rule",
+      "Claiming the dashboard is live-hosted",
+      "Uploading credentials or extracts to an unapproved service"
+    ],
+    "blocker": "Missing eligible Premium/Fabric capacity or VNet gateway licensing requires explicit user/professor direction before Gate B."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "phase11-private-artifact-staging-connectivity-v1",
+  "status": "blocked_until_private_upload_route_is_verified",
+  "selected_upload_runner_type": "unselected",
+  "supported_upload_runner_types": [
+    "point-to-site-vpn workstation",
+    "site-to-site-vpn network runner",
+    "ExpressRoute-connected runner",
+    "approved self-hosted runner inside the deployment VNet",
+    "approved administrative VM inside the deployment VNet"
+  ],
+  "private_dns": {
+    "required_zone": "privatelink.blob.core.windows.net",
+    "normal_endpoint_template": "<staging-account>.blob.core.windows.net",
+    "requirement": "The normal Blob FQDN must resolve to the staging private endpoint address through the linked private DNS zone."
+  },
+  "network": {
+    "expected_private_endpoint_subnet": "10.42.3.0/24",
+    "required_route": "Upload runner must have an approved private route to the deployment VNet private-endpoints subnet.",
+    "public_network_access": "disabled",
+    "tls": "HTTPS required"
+  },
+  "authorization": {
+    "upload_runner_role": "Storage Blob Data Contributor scoped to the staging account or container",
+    "worker_role": "Storage Blob Data Contributor scoped to the staging account",
+    "authentication": "Microsoft Entra identity; shared keys and SAS tokens are not committed or printed"
+  },
+  "gate_b_evidence": [
+    "Named upload-runner type and accountable administrator",
+    "Private route/VPN/runner configuration approval",
+    "Blob FQDN DNS result within the expected private endpoint subnet",
+    "Successful TLS connection to the normal Blob FQDN",
+    "RBAC assignment scoped to the approved staging account or container",
+    "Artifact upload with overwrite disabled and verified readback hashes",
+    "Deployment manifest uploaded last and verified by readback",
+    "Staging lifecycle and actual cost monitoring enabled"
+  ],
+  "cost_category": "Private route or self-hosted runner/VM plus Storage private endpoint, Blob operations, storage, and data transfer.",
+  "fallback": "If no private upload route exists, Gate B artifact staging and all pipeline jobs remain blocked. Public Storage access must not be enabled."
+}

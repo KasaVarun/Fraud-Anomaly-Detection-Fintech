@@ -1,0 +1,1187 @@
+{
+  "basePath": "/",
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "DashboardSummaryData": {
+      "properties": {
+        "active_model_id": {
+          "title": "Active Model Id",
+          "type": "string"
+        },
+        "amount_total": {
+          "title": "Amount Total",
+          "type": "string"
+        },
+        "flag_rate": {
+          "title": "Flag Rate",
+          "type": "number"
+        },
+        "fraud_flag_count": {
+          "title": "Fraud Flag Count",
+          "type": "integer"
+        },
+        "kind": {
+          "default": "dashboard_summary",
+          "enum": [
+            "dashboard_summary"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "score_maximum": {
+          "title": "Score Maximum",
+          "type": "number",
+          "x-nullable": true
+        },
+        "score_mean": {
+          "title": "Score Mean",
+          "type": "number",
+          "x-nullable": true
+        },
+        "score_minimum": {
+          "title": "Score Minimum",
+          "type": "number",
+          "x-nullable": true
+        },
+        "scored_transaction_count": {
+          "title": "Scored Transaction Count",
+          "type": "integer"
+        },
+        "transaction_count": {
+          "title": "Transaction Count",
+          "type": "integer"
+        },
+        "transaction_type_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Transaction Type Counts",
+          "type": "object"
+        }
+      },
+      "required": [
+        "transaction_count",
+        "scored_transaction_count",
+        "fraud_flag_count",
+        "flag_rate",
+        "amount_total",
+        "score_minimum",
+        "score_maximum",
+        "score_mean",
+        "transaction_type_counts",
+        "active_model_id"
+      ],
+      "title": "DashboardSummaryData",
+      "type": "object"
+    },
+    "ErrorBody": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object",
+          "x-nullable": true
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "request_id"
+      ],
+      "title": "ErrorBody",
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorBody"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "title": "ErrorResponse",
+      "type": "object"
+    },
+    "EvidenceEnvelope": {
+      "properties": {
+        "data": {
+          "description": "One of the documented response models.",
+          "type": "object",
+          "x-model-variants": [
+            "TransactionInvestigation",
+            "RelatedAccountsData",
+            "SimilarBehaviorData",
+            "DashboardSummaryData",
+            "FlagPageData",
+            "FreshnessData"
+          ],
+          "x-nullable": true
+        },
+        "evidence_status": {
+          "enum": [
+            "available",
+            "not_configured",
+            "unavailable",
+            "not_found",
+            "version_mismatch"
+          ],
+          "title": "Evidence Status",
+          "type": "string"
+        },
+        "freshness": {
+          "$ref": "#/definitions/Freshness"
+        },
+        "next_cursor": {
+          "title": "Next Cursor",
+          "type": "string",
+          "x-nullable": true
+        },
+        "partial_evidence": {
+          "title": "Partial Evidence",
+          "type": "boolean"
+        },
+        "provenance": {
+          "$ref": "#/definitions/Provenance"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data",
+        "provenance",
+        "freshness",
+        "partial_evidence",
+        "evidence_status"
+      ],
+      "title": "EvidenceEnvelope",
+      "type": "object"
+    },
+    "EvidenceSection": {
+      "properties": {
+        "data": {
+          "description": "One of the documented response models.",
+          "type": "object",
+          "x-model-variants": [
+            "object",
+            "array"
+          ],
+          "x-nullable": true
+        },
+        "status": {
+          "enum": [
+            "available",
+            "not_configured",
+            "unavailable",
+            "not_found",
+            "version_mismatch"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "warning": {
+          "title": "Warning",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "EvidenceSection",
+      "type": "object"
+    },
+    "FlagItem": {
+      "properties": {
+        "amount": {
+          "title": "Amount",
+          "type": "string"
+        },
+        "batch_id": {
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "flag_reason": {
+          "title": "Flag Reason",
+          "type": "string"
+        },
+        "model_version_id": {
+          "title": "Model Version Id",
+          "type": "string"
+        },
+        "receiver_id": {
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "review_status": {
+          "title": "Review Status",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "scored_at": {
+          "format": "date-time",
+          "title": "Scored At",
+          "type": "string"
+        },
+        "sender_id": {
+          "title": "Sender Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "title": "Snapshot Id",
+          "type": "string",
+          "x-nullable": true
+        },
+        "step": {
+          "title": "Step",
+          "type": "integer"
+        },
+        "threshold": {
+          "title": "Threshold",
+          "type": "number"
+        },
+        "transaction_id": {
+          "title": "Transaction Id",
+          "type": "string"
+        },
+        "transaction_type": {
+          "title": "Transaction Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_id",
+        "step",
+        "transaction_type",
+        "amount",
+        "sender_id",
+        "receiver_id",
+        "score",
+        "threshold",
+        "model_version_id",
+        "flag_reason",
+        "review_status",
+        "snapshot_id",
+        "scored_at",
+        "batch_id"
+      ],
+      "title": "FlagItem",
+      "type": "object"
+    },
+    "FlagPageData": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/definitions/FlagItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "kind": {
+          "default": "fraud_flags",
+          "enum": [
+            "fraud_flags"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "FlagPageData",
+      "type": "object"
+    },
+    "Freshness": {
+      "properties": {
+        "complete": {
+          "default": false,
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "latest_published_batch": {
+          "title": "Latest Published Batch",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pending_batch_count": {
+          "default": 0,
+          "title": "Pending Batch Count",
+          "type": "integer"
+        },
+        "published_cutoff_step": {
+          "title": "Published Cutoff Step",
+          "type": "integer",
+          "x-nullable": true
+        }
+      },
+      "title": "Freshness",
+      "type": "object"
+    },
+    "FreshnessData": {
+      "properties": {
+        "active_model_version": {
+          "title": "Active Model Version",
+          "type": "string"
+        },
+        "dependencies": {
+          "additionalProperties": {
+            "enum": [
+              "available",
+              "not_configured",
+              "unavailable",
+              "not_found",
+              "version_mismatch"
+            ],
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "object"
+        },
+        "evidence_complete": {
+          "title": "Evidence Complete",
+          "type": "boolean"
+        },
+        "kind": {
+          "default": "freshness",
+          "enum": [
+            "freshness"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "latest_published_batch": {
+          "title": "Latest Published Batch",
+          "type": "string",
+          "x-nullable": true
+        },
+        "model_training_cutoff": {
+          "title": "Model Training Cutoff",
+          "type": "integer"
+        },
+        "pending_batch_count": {
+          "title": "Pending Batch Count",
+          "type": "integer"
+        },
+        "published_cutoff_step": {
+          "title": "Published Cutoff Step",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Versions",
+          "type": "object"
+        }
+      },
+      "required": [
+        "latest_published_batch",
+        "published_cutoff_step",
+        "pending_batch_count",
+        "active_model_version",
+        "model_training_cutoff",
+        "versions",
+        "dependencies",
+        "evidence_complete"
+      ],
+      "title": "FreshnessData",
+      "type": "object"
+    },
+    "Provenance": {
+      "properties": {
+        "batch_id": {
+          "title": "Batch Id",
+          "type": "string",
+          "x-nullable": true
+        },
+        "input_version": {
+          "title": "Input Version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "model_version_id": {
+          "title": "Model Version Id",
+          "type": "string",
+          "x-nullable": true
+        },
+        "snapshot_id": {
+          "title": "Snapshot Id",
+          "type": "string",
+          "x-nullable": true
+        },
+        "source_version": {
+          "title": "Source Version",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "title": "Provenance",
+      "type": "object"
+    },
+    "RelatedAccountsData": {
+      "properties": {
+        "account_id": {
+          "title": "Account Id",
+          "type": "string"
+        },
+        "disclaimer": {
+          "default": "Shared infrastructure and communities are evidence, not proof of coordination.",
+          "title": "Disclaimer",
+          "type": "string"
+        },
+        "kind": {
+          "default": "related_accounts",
+          "enum": [
+            "related_accounts"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "relationship_type": {
+          "title": "Relationship Type",
+          "type": "string"
+        },
+        "relationships": {
+          "$ref": "#/definitions/EvidenceSection"
+        },
+        "snapshot": {
+          "additionalProperties": true,
+          "title": "Snapshot",
+          "type": "object",
+          "x-nullable": true
+        }
+      },
+      "required": [
+        "account_id",
+        "relationship_type",
+        "snapshot",
+        "relationships"
+      ],
+      "title": "RelatedAccountsData",
+      "type": "object"
+    },
+    "SimilarBehaviorData": {
+      "properties": {
+        "disclaimer": {
+          "default": "Cosine distance is similarity evidence, not fraud probability.",
+          "title": "Disclaimer",
+          "type": "string"
+        },
+        "kind": {
+          "default": "similar_behavior",
+          "enum": [
+            "similar_behavior"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "matches": {
+          "$ref": "#/definitions/EvidenceSection"
+        },
+        "metric": {
+          "default": "cosine_distance",
+          "enum": [
+            "cosine_distance"
+          ],
+          "title": "Metric",
+          "type": "string"
+        },
+        "transaction_id": {
+          "title": "Transaction Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_id",
+        "matches"
+      ],
+      "title": "SimilarBehaviorData",
+      "type": "object"
+    },
+    "TransactionInvestigation": {
+      "properties": {
+        "disclaimer": {
+          "default": "A fraud flag and graph evidence are investigation signals, not proof of fraud.",
+          "title": "Disclaimer",
+          "type": "string"
+        },
+        "fraud_flag": {
+          "additionalProperties": true,
+          "title": "Fraud Flag",
+          "type": "object",
+          "x-nullable": true
+        },
+        "graph_evidence": {
+          "$ref": "#/definitions/EvidenceSection"
+        },
+        "graph_snapshot": {
+          "additionalProperties": true,
+          "title": "Graph Snapshot",
+          "type": "object",
+          "x-nullable": true
+        },
+        "kind": {
+          "default": "transaction",
+          "enum": [
+            "transaction"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "participants": {
+          "additionalProperties": true,
+          "title": "Participants",
+          "type": "object"
+        },
+        "prediction": {
+          "additionalProperties": true,
+          "title": "Prediction",
+          "type": "object",
+          "x-nullable": true
+        },
+        "raw_evidence": {
+          "$ref": "#/definitions/EvidenceSection"
+        },
+        "transaction": {
+          "additionalProperties": true,
+          "title": "Transaction",
+          "type": "object"
+        },
+        "vector_evidence": {
+          "$ref": "#/definitions/EvidenceSection"
+        }
+      },
+      "required": [
+        "transaction",
+        "participants",
+        "prediction",
+        "fraud_flag",
+        "graph_snapshot",
+        "raw_evidence",
+        "graph_evidence",
+        "vector_evidence"
+      ],
+      "title": "TransactionInvestigation",
+      "type": "object"
+    }
+  },
+  "host": "{deployed-api-host}",
+  "info": {
+    "description": "Template for the six approved read-only actions. Generate a tenant-specific ignored export before Gate B connector import.",
+    "title": "Fraud Investigator Copilot Studio Connector",
+    "version": "phase11-gate-a-v1"
+  },
+  "paths": {
+    "/v1/dashboard/flags": {
+      "get": {
+        "description": "Returns deterministic cursor pagination over locked-model published flags.",
+        "operationId": "listPublishedFraudFlags",
+        "parameters": [
+          {
+            "default": 25,
+            "in": "query",
+            "maximum": 100,
+            "minimum": 1,
+            "name": "limit",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "enum": [
+              "open",
+              "reviewed"
+            ],
+            "in": "query",
+            "name": "review_status",
+            "required": false,
+            "type": "string",
+            "x-nullable": true
+          },
+          {
+            "in": "query",
+            "maximum": 1,
+            "minimum": 0,
+            "name": "minimum_score",
+            "required": false,
+            "type": "number",
+            "x-nullable": true
+          },
+          {
+            "enum": [
+              "CASH_IN",
+              "CASH_OUT",
+              "DEBIT",
+              "PAYMENT",
+              "TRANSFER"
+            ],
+            "in": "query",
+            "name": "transaction_type",
+            "required": false,
+            "type": "string",
+            "x-nullable": true
+          },
+          {
+            "in": "query",
+            "maxLength": 1024,
+            "name": "cursor",
+            "required": false,
+            "type": "string",
+            "x-nullable": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/EvidenceEnvelope"
+            }
+          },
+          "401": {
+            "description": "A valid bearer token is required.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "The authenticated principal lacks the required permission.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "An unexpected error occurred.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "A required evidence dependency is unavailable.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "entraOAuth2": [
+              "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+            ]
+          }
+        ],
+        "summary": "List published fraud flags",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/dashboard/summary": {
+      "get": {
+        "description": "Returns bounded published-only aggregates without source-label performance metrics.",
+        "operationId": "getPublishedDashboardSummary",
+        "parameters": [
+          {
+            "in": "query",
+            "maximum": 1000000,
+            "minimum": 0,
+            "name": "start_step",
+            "required": false,
+            "type": "integer",
+            "x-nullable": true
+          },
+          {
+            "in": "query",
+            "maximum": 1000000,
+            "minimum": 0,
+            "name": "end_step",
+            "required": false,
+            "type": "integer",
+            "x-nullable": true
+          },
+          {
+            "enum": [
+              "CASH_IN",
+              "CASH_OUT",
+              "DEBIT",
+              "PAYMENT",
+              "TRANSFER"
+            ],
+            "in": "query",
+            "name": "transaction_type",
+            "required": false,
+            "type": "string",
+            "x-nullable": true
+          },
+          {
+            "in": "query",
+            "name": "flagged",
+            "required": false,
+            "type": "boolean",
+            "x-nullable": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/EvidenceEnvelope"
+            }
+          },
+          "401": {
+            "description": "A valid bearer token is required.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "The authenticated principal lacks the required permission.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "An unexpected error occurred.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "A required evidence dependency is unavailable.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "entraOAuth2": [
+              "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+            ]
+          }
+        ],
+        "summary": "Get published transaction and score aggregates",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/investigations/accounts/{account_id}/related": {
+      "get": {
+        "description": "Returns published-snapshot relationships with bounded parameterized graph traversal.",
+        "operationId": "getRelatedAccountEvidence",
+        "parameters": [
+          {
+            "in": "path",
+            "maxLength": 256,
+            "minLength": 1,
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "default": "all",
+            "enum": [
+              "all",
+              "money_flow",
+              "shared_device",
+              "shared_ip"
+            ],
+            "in": "query",
+            "name": "relationship_type",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": 25,
+            "in": "query",
+            "maximum": 100,
+            "minimum": 1,
+            "name": "limit",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "default": 0,
+            "in": "query",
+            "maximum": 1000000,
+            "minimum": 0,
+            "name": "minimum_evidence_weight",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "maxLength": 256,
+            "minLength": 1,
+            "name": "snapshot_id",
+            "required": false,
+            "type": "string",
+            "x-nullable": true
+          },
+          {
+            "in": "query",
+            "maxLength": 1024,
+            "name": "cursor",
+            "required": false,
+            "type": "string",
+            "x-nullable": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/EvidenceEnvelope"
+            }
+          },
+          "401": {
+            "description": "A valid bearer token is required.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "The authenticated principal lacks the required permission.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Published evidence was not found.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "An unexpected error occurred.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "A required evidence dependency is unavailable.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "entraOAuth2": [
+              "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+            ]
+          }
+        ],
+        "summary": "Get bounded related-account evidence",
+        "tags": [
+          "investigations"
+        ]
+      }
+    },
+    "/v1/investigations/transactions/{transaction_id}": {
+      "get": {
+        "description": "Returns published relational evidence and explicit optional raw, graph, and vector states.",
+        "operationId": "getTransactionEvidence",
+        "parameters": [
+          {
+            "in": "path",
+            "maxLength": 256,
+            "minLength": 1,
+            "name": "transaction_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/EvidenceEnvelope"
+            }
+          },
+          "401": {
+            "description": "A valid bearer token is required.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "The authenticated principal lacks the required permission.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Published evidence was not found.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "An unexpected error occurred.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "A required evidence dependency is unavailable.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "entraOAuth2": [
+              "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+            ]
+          }
+        ],
+        "summary": "Get unified published transaction evidence",
+        "tags": [
+          "investigations"
+        ]
+      }
+    },
+    "/v1/investigations/transactions/{transaction_id}/similar": {
+      "get": {
+        "description": "Returns compatible earlier-reference cosine distances, never fraud labels.",
+        "operationId": "getSimilarBehaviorEvidence",
+        "parameters": [
+          {
+            "in": "path",
+            "maxLength": 256,
+            "minLength": 1,
+            "name": "transaction_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "default": 10,
+            "in": "query",
+            "maximum": 100,
+            "minimum": 1,
+            "name": "limit",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "maximum": 2,
+            "minimum": 0,
+            "name": "maximum_cosine_distance",
+            "required": false,
+            "type": "number",
+            "x-nullable": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/EvidenceEnvelope"
+            }
+          },
+          "401": {
+            "description": "A valid bearer token is required.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "The authenticated principal lacks the required permission.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Published evidence was not found.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "An unexpected error occurred.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "A required evidence dependency is unavailable.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "entraOAuth2": [
+              "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+            ]
+          }
+        ],
+        "summary": "Get bounded similar-behavior evidence",
+        "tags": [
+          "investigations"
+        ]
+      }
+    },
+    "/v1/meta/freshness": {
+      "get": {
+        "description": "Reports published cutoff, pending counts, active lineage, and dependency states.",
+        "operationId": "getEvidenceFreshness",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/EvidenceEnvelope"
+            }
+          },
+          "401": {
+            "description": "A valid bearer token is required.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "The authenticated principal lacks the required permission.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "An unexpected error occurred.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "A required evidence dependency is unavailable.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "entraOAuth2": [
+              "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+            ]
+          }
+        ],
+        "summary": "Get sanitized evidence freshness",
+        "tags": [
+          "metadata"
+        ]
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "security": [
+    {
+      "entraOAuth2": [
+        "api://{api-application-client-id}/{Fraud.Investigate-scope}"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "entraOAuth2": {
+      "authorizationUrl": "https://login.microsoftonline.com/{entra-tenant-id}/oauth2/v2.0/authorize",
+      "flow": "accessCode",
+      "scopes": {
+        "api://{api-application-client-id}/{Fraud.Investigate-scope}": "Read published fraud-investigation evidence."
+      },
+      "tokenUrl": "https://login.microsoftonline.com/{entra-tenant-id}/oauth2/v2.0/token",
+      "type": "oauth2",
+      "x-api-application-id": "{api-application-client-id}",
+      "x-connector-application-id": "{connector-application-client-id}",
+      "x-on-behalf-of-compatible": true,
+      "x-tenant-id": "{entra-tenant-id}"
+    }
+  },
+  "swagger": "2.0",
+  "x-deployment-export-policy": "Tenant-specific exports belong under contracts/copilot/generated/ and are ignored.",
+  "x-template-kind": "committed-placeholder-template"
+}

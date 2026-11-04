@@ -1,0 +1,1090 @@
+{
+  "activeReportingModel": {
+    "filterRule": "Filter score, flag, trend, and evaluation visuals to this version until a separately approved release changes the contract.",
+    "modelVersionId": "model:lightgbm_combined:1e9a3fc0a52dbac541bf4f92"
+  },
+  "contractVersion": "power-bi-dashboard-v1",
+  "interpretationWarnings": [
+    "A fraud flag is an investigation signal, not proof of fraud or guilt.",
+    "Synthetic device/IP links and graph communities do not establish real-world coordination.",
+    "PaySim amounts are synthetic dataset units, not customer money.",
+    "No observed-fraud KPI is exposed because source labels remain protected and evaluation-only."
+  ],
+  "measures": [
+    {
+      "denominator": "Not applicable; this is the distinct published transaction count at batch grain.",
+      "description": "All transactions in published batches, whether scored or unscored.",
+      "expression": "SUM(reporting_batch_freshness[published_transaction_count])",
+      "name": "Published Transactions",
+      "sourceView": "reporting_batch_freshness"
+    },
+    {
+      "denominator": "Not applicable; this is a distinct transaction count for the active model.",
+      "description": "Published transactions with an immutable score for the active model.",
+      "expression": "CALCULATE(DISTINCTCOUNT(reporting_published_transaction[transaction_id]), NOT(ISBLANK(reporting_published_transaction[score_id])), reporting_published_transaction[model_version_id] = SELECTEDVALUE(reporting_system_lineage[active_model_version]))",
+      "name": "Scored Transactions",
+      "sourceView": "reporting_published_transaction"
+    },
+    {
+      "denominator": "Not applicable; this is a distinct flagged transaction count for the active model.",
+      "description": "Published scored transactions with a threshold-consistent flag.",
+      "expression": "CALCULATE(DISTINCTCOUNT(reporting_published_transaction[transaction_id]), reporting_published_transaction[is_flagged] = TRUE(), reporting_published_transaction[model_version_id] = SELECTEDVALUE(reporting_system_lineage[active_model_version]))",
+      "name": "Flagged Transactions",
+      "sourceView": "reporting_published_transaction"
+    },
+    {
+      "denominator": "Scored Transactions; unscored transactions are excluded.",
+      "description": "Flagged scored transactions divided by scored transactions.",
+      "expression": "DIVIDE([Flagged Transactions], [Scored Transactions], 0)",
+      "name": "Flag Rate",
+      "sourceView": "reporting_published_transaction"
+    },
+    {
+      "denominator": "Not applicable; each published transaction amount is counted once.",
+      "description": "Published amount total in synthetic PaySim dataset units.",
+      "expression": "SUMX(VALUES(reporting_published_transaction[transaction_id]), CALCULATE(MAX(reporting_published_transaction[amount])))",
+      "name": "Total Transaction Amount",
+      "sourceView": "reporting_published_transaction"
+    },
+    {
+      "denominator": "Not applicable; each flagged published transaction amount is counted once.",
+      "description": "Flagged amount total in synthetic PaySim dataset units.",
+      "expression": "SUMX(FILTER(VALUES(reporting_published_transaction[transaction_id]), CALCULATE(MAX(reporting_published_transaction[is_flagged])) = TRUE()), CALCULATE(MAX(reporting_published_transaction[amount])))",
+      "name": "Flagged Exposure",
+      "sourceView": "reporting_published_transaction"
+    },
+    {
+      "denominator": "Not applicable; selects one latest published batch with a stable batch-ID tie-break.",
+      "description": "Identifier of the latest published batch.",
+      "expression": "MAXX(TOPN(1, FILTER(reporting_batch_freshness, reporting_batch_freshness[is_published] = TRUE()), reporting_batch_freshness[batch_created_at], DESC, reporting_batch_freshness[batch_id], DESC), reporting_batch_freshness[batch_id])",
+      "name": "Latest Published Batch",
+      "sourceView": "reporting_batch_freshness"
+    },
+    {
+      "denominator": "Not applicable; maximum PaySim step across published batches.",
+      "description": "Published data freshness watermark in PaySim steps.",
+      "expression": "MAXX(FILTER(reporting_batch_freshness, reporting_batch_freshness[is_published] = TRUE()), reporting_batch_freshness[published_max_step])",
+      "name": "Latest Published Cutoff Step",
+      "sourceView": "reporting_batch_freshness"
+    },
+    {
+      "denominator": "Not applicable; counts pending batch rows.",
+      "description": "Batches awaiting reconciliation/publication.",
+      "expression": "COUNTROWS(FILTER(reporting_batch_freshness, reporting_batch_freshness[batch_status] = \"pending\"))",
+      "name": "Pending Batch Count",
+      "sourceView": "reporting_batch_freshness"
+    },
+    {
+      "denominator": "Not applicable; maximum score timestamp for the active model.",
+      "description": "Most recent published active-model score timestamp.",
+      "expression": "CALCULATE(MAX(reporting_published_transaction[scored_at]), reporting_published_transaction[model_version_id] = SELECTEDVALUE(reporting_system_lineage[active_model_version]))",
+      "name": "Latest Score Time",
+      "sourceView": "reporting_published_transaction"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Executive Overview",
+      "visuals": [
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Published Transactions",
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Published Transactions",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Scored Transactions",
+          "sort": [],
+          "sourceView": "reporting_published_transaction",
+          "title": "Scored Transactions",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Flagged Transactions",
+          "sort": [],
+          "sourceView": "reporting_published_transaction",
+          "title": "Flagged Transactions",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Flag Rate",
+          "sort": [],
+          "sourceView": "reporting_published_transaction",
+          "title": "Flag Rate",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Total Transaction Amount",
+          "sort": [],
+          "sourceView": "reporting_published_transaction",
+          "title": "Total Transaction Amount",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Latest Published Batch",
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Latest Published Batch",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Latest Published Cutoff Step",
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Latest Published Cutoff Step",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Pending Batch Count",
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Pending Batch Count",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        }
+      ]
+    },
+    {
+      "name": "Transaction Trends",
+      "visuals": [
+        {
+          "categoryFields": [
+            "step"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "step ASC"
+          ],
+          "sourceView": "reporting_published_transaction_trend",
+          "title": "Transaction count by PaySim step",
+          "valueFields": [
+            "transaction_count"
+          ],
+          "visualType": "lineChart",
+          "warning": null
+        },
+        {
+          "categoryFields": [
+            "step"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "step ASC"
+          ],
+          "sourceView": "reporting_published_transaction_trend",
+          "title": "Flag count by step",
+          "valueFields": [
+            "flagged_transaction_count"
+          ],
+          "visualType": "columnChart",
+          "warning": null
+        },
+        {
+          "categoryFields": [
+            "step"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "step ASC"
+          ],
+          "sourceView": "reporting_published_transaction_trend",
+          "title": "Flag rate by step",
+          "valueFields": [
+            "flag_rate"
+          ],
+          "visualType": "lineChart",
+          "warning": "Flag rate denominator is scored transactions for the active model."
+        },
+        {
+          "categoryFields": [
+            "transaction_type"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "transaction_count DESC",
+            "transaction_type ASC"
+          ],
+          "sourceView": "reporting_published_transaction_trend",
+          "title": "Transaction-type distribution",
+          "valueFields": [
+            "transaction_count"
+          ],
+          "visualType": "barChart",
+          "warning": null
+        },
+        {
+          "categoryFields": [
+            "fraud_probability bins"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "model_version_id = active model",
+            "score_id is not blank"
+          ],
+          "measure": null,
+          "sort": [
+            "fraud_probability bins ASC"
+          ],
+          "sourceView": "reporting_published_transaction",
+          "title": "Score distribution",
+          "valueFields": [
+            "transaction_id distinct count"
+          ],
+          "visualType": "histogram",
+          "warning": "Model scores are investigation signals, not proof of fraud."
+        },
+        {
+          "categoryFields": [
+            "transaction_type"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "transaction_amount DESC",
+            "transaction_type ASC"
+          ],
+          "sourceView": "reporting_published_transaction_trend",
+          "title": "Transaction amount by type",
+          "valueFields": [
+            "transaction_amount"
+          ],
+          "visualType": "columnChart",
+          "warning": "Amounts are synthetic PaySim dataset units."
+        }
+      ]
+    },
+    {
+      "name": "Investigation Queue",
+      "visuals": [
+        {
+          "apiHandoff": "/v1/investigations/transactions/{transaction_id}",
+          "categoryFields": [],
+          "drillThroughField": "transaction_id",
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "is_flagged = TRUE",
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "fraud_probability DESC",
+            "step ASC",
+            "transaction_id ASC"
+          ],
+          "sourceView": "reporting_published_transaction",
+          "title": "Published flagged transaction queue",
+          "valueFields": [
+            "transaction_id",
+            "step",
+            "transaction_type",
+            "amount",
+            "sender_id",
+            "receiver_id",
+            "fraud_probability",
+            "threshold",
+            "flag_reason",
+            "review_status",
+            "model_version_id",
+            "input_version",
+            "snapshot_id",
+            "batch_id",
+            "scored_at"
+          ],
+          "visualType": "table",
+          "warning": "Flags require human review and are not proof of fraud."
+        }
+      ]
+    },
+    {
+      "name": "Model Performance",
+      "visuals": [
+        {
+          "categoryFields": [
+            "split_name"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No aggregate evaluation exists for a published batch; show an empty evaluation state and do not infer model quality.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "split_name ASC"
+          ],
+          "sourceView": "reporting_published_model_evaluation",
+          "title": "TP, FP, TN, and FN",
+          "valueFields": [
+            "tp",
+            "fp",
+            "tn",
+            "fn"
+          ],
+          "visualType": "clusteredColumnChart",
+          "warning": "Aggregate offline evaluation metrics are not transaction truth."
+        },
+        {
+          "categoryFields": [
+            "split_name"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No aggregate evaluation exists for a published batch; show an empty evaluation state and do not infer model quality.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "split_name ASC"
+          ],
+          "sourceView": "reporting_published_model_evaluation",
+          "title": "Precision, Recall, and F1",
+          "valueFields": [
+            "precision",
+            "recall",
+            "f1"
+          ],
+          "visualType": "lineAndColumnChart",
+          "warning": "Aggregate offline evaluation metrics are not transaction truth."
+        },
+        {
+          "categoryFields": [
+            "split_name"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No aggregate evaluation exists for a published batch; show an empty evaluation state and do not infer model quality.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [],
+          "sourceView": "reporting_published_model_evaluation",
+          "title": "PR-AUC",
+          "valueFields": [
+            "pr_auc"
+          ],
+          "visualType": "card",
+          "warning": "Aggregate offline evaluation metrics are not transaction truth."
+        },
+        {
+          "categoryFields": [
+            "split_name",
+            "model_version_id"
+          ],
+          "drillThroughField": null,
+          "emptyState": "No aggregate evaluation exists for a published batch; show an empty evaluation state and do not infer model quality.",
+          "filters": [
+            "model_version_id = active model"
+          ],
+          "measure": null,
+          "sort": [
+            "split_name ASC"
+          ],
+          "sourceView": "reporting_published_model_evaluation",
+          "title": "Evaluation lineage",
+          "valueFields": [
+            "training_cutoff_step"
+          ],
+          "visualType": "table",
+          "warning": "Split name, model version, and training cutoff describe aggregate offline evaluation lineage, not transaction truth."
+        }
+      ]
+    },
+    {
+      "name": "Freshness and Lineage",
+      "visuals": [
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Latest Published Batch",
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Latest published batch",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "Show zero only when no pending rows exist; pending status is not published evidence.",
+          "filters": [],
+          "measure": "Pending Batch Count",
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Pending batch count",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "is_published = TRUE"
+          ],
+          "measure": null,
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Published minimum and maximum step",
+          "valueFields": [
+            "published_min_step",
+            "published_max_step"
+          ],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [
+            "is_published = TRUE"
+          ],
+          "measure": null,
+          "sort": [],
+          "sourceView": "reporting_batch_freshness",
+          "title": "Published transaction, score, and flag counts",
+          "valueFields": [
+            "published_transaction_count",
+            "published_score_count",
+            "published_flag_count"
+          ],
+          "visualType": "multiRowCard",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "No published batches are available; show the title and an honest no-published-data message with no zero-as-evidence implication.",
+          "filters": [],
+          "measure": "Latest Score Time",
+          "sort": [],
+          "sourceView": "reporting_published_transaction",
+          "title": "Latest score time",
+          "valueFields": [],
+          "visualType": "card",
+          "warning": null
+        },
+        {
+          "categoryFields": [],
+          "drillThroughField": null,
+          "emptyState": "Configuration error: the single reporting lineage row is missing; do not infer versions.",
+          "filters": [],
+          "measure": null,
+          "sort": [],
+          "sourceView": "reporting_system_lineage",
+          "title": "Approved system lineage",
+          "valueFields": [
+            "active_model_version",
+            "feature_version",
+            "embedding_version",
+            "raw_projection_version",
+            "graph_projection_version",
+            "reporting_contract_version"
+          ],
+          "visualType": "table",
+          "warning": "These are approved version identifiers, not service-health claims."
+        }
+      ]
+    }
+  ],
+  "publicationBoundary": {
+    "prohibitedSources": [
+      "base PostgreSQL tables",
+      "transaction_label",
+      "Cosmos DB containers",
+      "Gremlin",
+      "raw PaySim balance fields"
+    ],
+    "rule": "Transaction, score, flag, trend, and evaluation facts are SQL-filtered to published batches.",
+    "warning": "The current local database has no published batches; an empty report is the honest result."
+  },
+  "refresh": {
+    "freshnessView": "reporting_batch_freshness",
+    "scheduledRefresh": "Configured in Phase 11; no live schedule is claimed in Phase 10.",
+    "trigger": "Refresh only after a batch has passed reconciliation and is published.",
+    "watermarkField": "published_max_step"
+  },
+  "relationships": [
+    {
+      "cardinality": "one-to-many",
+      "crossFilterDirection": "single",
+      "from": "reporting_batch_freshness.batch_id",
+      "to": "reporting_published_transaction.batch_id"
+    },
+    {
+      "cardinality": "one-to-many",
+      "crossFilterDirection": "single",
+      "from": "reporting_batch_freshness.batch_id",
+      "to": "reporting_published_transaction_trend.batch_id"
+    },
+    {
+      "cardinality": "one-to-many",
+      "crossFilterDirection": "single",
+      "from": "reporting_batch_freshness.batch_id",
+      "to": "reporting_published_model_evaluation.batch_id"
+    }
+  ],
+  "reportFilters": [
+    "model_version_id equals activeReportingModel.modelVersionId",
+    "is_published equals true for operational facts",
+    "step range",
+    "transaction_type",
+    "review_status"
+  ],
+  "storageMode": {
+    "default": "Import",
+    "directQuery": {
+      "allowed": true,
+      "restriction": "Connect to the same reporting views; never bypass them with base-table SQL.",
+      "when": "Use only when published transaction detail exceeds the approved Import capacity."
+    },
+    "rationale": "Published batches are immutable reporting snapshots and Import gives stable bounded visuals."
+  },
+  "title": "Fraud and Anomaly Detection Investigator Dashboard",
+  "views": [
+    {
+      "fields": [
+        {
+          "description": "Stable transaction ID.",
+          "name": "transaction_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Published ingestion batch ID.",
+          "name": "batch_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Stable source row.",
+          "name": "source_row",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Stable sender account ID.",
+          "name": "sender_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Stable receiver account ID.",
+          "name": "receiver_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "PaySim simulation step.",
+          "name": "step",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "PaySim transaction type.",
+          "name": "transaction_type",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Dataset amount.",
+          "name": "amount",
+          "nullable": false,
+          "powerBiType": "Fixed decimal number"
+        },
+        {
+          "description": "Chronological split.",
+          "name": "data_split",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Batch creation time.",
+          "name": "batch_created_at",
+          "nullable": false,
+          "powerBiType": "Date/Time"
+        },
+        {
+          "description": "Selected immutable score ID.",
+          "name": "score_id",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Scoring model version.",
+          "name": "model_version_id",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Model feature-family version.",
+          "name": "feature_set",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Last training step for the model.",
+          "name": "training_cutoff_step",
+          "nullable": true,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Locked model threshold.",
+          "name": "threshold",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Embedding lineage.",
+          "name": "embedding_version",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Immutable score input lineage.",
+          "name": "input_version",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Historical graph snapshot ID.",
+          "name": "snapshot_id",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Strict historical snapshot cutoff.",
+          "name": "snapshot_cutoff_step",
+          "nullable": true,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Graph analysis algorithm lineage.",
+          "name": "snapshot_algorithm_version",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Locked-model probability; an investigation signal, not proof.",
+          "name": "fraud_probability",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Stored causal vector feature distance.",
+          "name": "vector_distance",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Score creation time.",
+          "name": "scored_at",
+          "nullable": true,
+          "powerBiType": "Date/Time"
+        },
+        {
+          "description": "Threshold-consistent flag ID.",
+          "name": "flag_id",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Stored flag reason.",
+          "name": "flag_reason",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Investigator review state.",
+          "name": "review_status",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Flag-presence indicator.",
+          "name": "is_flagged",
+          "nullable": false,
+          "powerBiType": "True/False"
+        }
+      ],
+      "grain": "One latest score row per published transaction and model version; unscored published transactions remain visible.",
+      "name": "reporting_published_transaction"
+    },
+    {
+      "fields": [
+        {
+          "description": "Published batch ID.",
+          "name": "batch_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Selected model version.",
+          "name": "model_version_id",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "PaySim simulation step.",
+          "name": "step",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "PaySim type.",
+          "name": "transaction_type",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Unique transactions.",
+          "name": "transaction_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Transactions with a selected score.",
+          "name": "scored_transaction_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Transactions with a threshold flag.",
+          "name": "flagged_transaction_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Published amount total in dataset units.",
+          "name": "transaction_amount",
+          "nullable": false,
+          "powerBiType": "Fixed decimal number"
+        },
+        {
+          "description": "Amount for unique flagged transactions in dataset units.",
+          "name": "flagged_exposure",
+          "nullable": false,
+          "powerBiType": "Fixed decimal number"
+        },
+        {
+          "description": "Minimum score.",
+          "name": "score_minimum",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Maximum score.",
+          "name": "score_maximum",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Mean score.",
+          "name": "score_mean",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Flagged divided by scored transactions.",
+          "name": "flag_rate",
+          "nullable": false,
+          "powerBiType": "Decimal number"
+        }
+      ],
+      "grain": "Published batch, model version, PaySim step, and transaction type.",
+      "name": "reporting_published_transaction_trend"
+    },
+    {
+      "fields": [
+        {
+          "description": "Immutable evaluation ID.",
+          "name": "evaluation_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Evaluated model version.",
+          "name": "model_version_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Feature-family version.",
+          "name": "feature_set",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Training cutoff.",
+          "name": "training_cutoff_step",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Locked threshold.",
+          "name": "threshold",
+          "nullable": false,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Embedding lineage.",
+          "name": "embedding_version",
+          "nullable": true,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Published evaluation batch.",
+          "name": "batch_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Aggregate evaluation split.",
+          "name": "split_name",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Aggregate TP count.",
+          "name": "tp",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Aggregate FP count.",
+          "name": "fp",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Aggregate TN count.",
+          "name": "tn",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Aggregate FN count.",
+          "name": "fn",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Aggregate confusion-count total.",
+          "name": "evaluated_row_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Aggregate precision metric.",
+          "name": "precision",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Aggregate recall metric.",
+          "name": "recall",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Aggregate f1 metric.",
+          "name": "f1",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Aggregate pr_auc metric.",
+          "name": "pr_auc",
+          "nullable": true,
+          "powerBiType": "Decimal number"
+        },
+        {
+          "description": "Batch creation time.",
+          "name": "batch_created_at",
+          "nullable": false,
+          "powerBiType": "Date/Time"
+        }
+      ],
+      "grain": "One aggregate evaluation per published batch, model version, and split.",
+      "name": "reporting_published_model_evaluation"
+    },
+    {
+      "fields": [
+        {
+          "description": "Ingestion batch ID.",
+          "name": "batch_id",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Current batch lifecycle state.",
+          "name": "batch_status",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Batch creation time.",
+          "name": "batch_created_at",
+          "nullable": false,
+          "powerBiType": "Date/Time"
+        },
+        {
+          "description": "Published-state marker.",
+          "name": "is_published",
+          "nullable": false,
+          "powerBiType": "True/False"
+        },
+        {
+          "description": "Transaction count exposed only for a published batch.",
+          "name": "published_transaction_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Minimum exposed step for a published batch.",
+          "name": "published_min_step",
+          "nullable": true,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Published freshness watermark.",
+          "name": "published_max_step",
+          "nullable": true,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Scores exposed only for a published batch.",
+          "name": "published_score_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        },
+        {
+          "description": "Flags exposed only for a published batch.",
+          "name": "published_flag_count",
+          "nullable": false,
+          "powerBiType": "Whole number"
+        }
+      ],
+      "grain": "One row per batch; pending batches expose status only and zero published fact counts.",
+      "name": "reporting_batch_freshness"
+    },
+    {
+      "fields": [
+        {
+          "description": "Approved reporting contract version.",
+          "name": "reporting_contract_version",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Approved active model version.",
+          "name": "active_model_version",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Approved feature version.",
+          "name": "feature_version",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Approved embedding version.",
+          "name": "embedding_version",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Approved raw projection version.",
+          "name": "raw_projection_version",
+          "nullable": false,
+          "powerBiType": "Text"
+        },
+        {
+          "description": "Approved graph projection version.",
+          "name": "graph_projection_version",
+          "nullable": false,
+          "powerBiType": "Text"
+        }
+      ],
+      "grain": "Exactly one row containing the approved current reporting and cross-store versions.",
+      "name": "reporting_system_lineage"
+    }
+  ]
+}

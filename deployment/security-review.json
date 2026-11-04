@@ -1,0 +1,57 @@
+{
+  "schema_version": "phase11-gate-a-security-review-v1",
+  "container_image": {
+    "tag": "fraud-investigator:gate-a-amd64",
+    "digest": "sha256:d23a2d54b9cf8648a23f8d938a4cb5a7c9aee16e3705a9f59fe8ea6f10cccab4",
+    "platform": "linux/amd64",
+    "size_bytes": 74212765,
+    "runtime_user": "10001:10001",
+    "critical_vulnerabilities": 0,
+    "high_vulnerabilities": 2,
+    "scanner": "Docker Scout 1.24.0",
+    "remaining_findings": [
+      { "id": "CVE-2026-84243", "package": "glibc", "fixed_version": null },
+      { "id": "CVE-2026-85091", "package": "zlib", "fixed_version": null }
+    ],
+    "base_image_review": {
+      "checked_at": "2026-11-01T14:03:17Z",
+      "current_amd64_manifest": "sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+      "current_multiarch_digest": "sha256:8523d6abeb48ceae0b7240d30c5808fc26cb79c1a635bacdf19cf3baecfbec07",
+      "fixed_base_available": false,
+      "result": "The pinned Python slim-trixie base is current. Docker Scout reports it up to date; Debian trixie still marks the zlib finding vulnerable and no verified trixie fix was found."
+    },
+    "gate_b_requirement": "Re-scan the final target-platform image and explicitly accept or eliminate every remaining high finding before deployment."
+  },
+  "worker_image": {
+    "tag": "fraud-worker:gate-a-amd64",
+    "digest": "sha256:2be18f88c5a493815665645720c9417cb345b2bd0a5a29316168b0861cd2683a",
+    "platform": "linux/amd64",
+    "size_bytes": 816252774,
+    "runtime_user": "10002:10002",
+    "critical_vulnerabilities": 0,
+    "high_vulnerabilities": 2,
+    "scanner": "Docker Scout 1.24.0",
+    "remaining_findings": [
+      { "id": "CVE-2026-84243", "package": "glibc", "fixed_version": null },
+      { "id": "CVE-2026-85091", "package": "zlib", "fixed_version": null }
+    ],
+    "base_image_review": {
+      "checked_at": "2026-11-01T14:03:17Z",
+      "current_amd64_manifest": "sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+      "current_multiarch_digest": "sha256:8523d6abeb48ceae0b7240d30c5808fc26cb79c1a635bacdf19cf3baecfbec07",
+      "fixed_base_available": false,
+      "result": "The pinned Python slim-trixie base is current. Docker Scout reports no newer refresh; both unresolved high findings remain Gate B blockers pending a fixed base or explicit risk acceptance."
+    },
+    "gate_b_requirement": "Re-scan the final target-platform worker image and explicitly accept or eliminate every remaining high finding before deployment."
+  },
+  "controls": [
+    "Every /v1 route requires Entra JWT authentication in non-local environments.",
+    "Health and OpenAPI remain anonymous and read-only.",
+    "Cosmos NoSQL uses managed identity with local key authentication disabled.",
+    "Gremlin and PostgreSQL technical credentials are referenced through Key Vault.",
+    "PostgreSQL, Cosmos NoSQL, Cosmos Gremlin, and Key Vault use private networking.",
+    "Container runs non-root with a bounded graceful shutdown and no development reload.",
+    "Deployment and teardown commands require explicit confirmations.",
+    "No live cloud mutation occurred during Gate A."
+  ]
+}

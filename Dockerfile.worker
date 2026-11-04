@@ -1,0 +1,34 @@
+# syntax=docker/dockerfile:1.7
+FROM ghcr.io/astral-sh/uv:0.9.26 AS uv
+
+FROM python:3.12.16-slim-trixie AS builder
+COPY --from=uv /uv /usr/local/bin/uv
+WORKDIR /build
+COPY deployment/worker-requirements.lock ./worker-requirements.lock
+RUN uv venv /opt/venv \
+    && uv pip install --python /opt/venv/bin/python --require-hashes --no-deps \
+       --no-cache -r worker-requirements.lock
+
+FROM python:3.12.16-slim-trixie AS runtime
+ENV PATH="/opt/venv/bin:${PATH}" \
+    PYTHONPATH=/app/src \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    FRAUD_WORK_ROOT=/work
+
+RUN groupadd --system --gid 10002 fraudworker \
+    && useradd --system --uid 10002 --gid fraudworker --home-dir /nonexistent \
+       --shell /usr/sbin/nologin fraudworker \
+    && mkdir -p /work/data/raw /work/data/processed /work/artifacts /work/config \
+    && chown -R 10002:10002 /work
+
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+COPY --chown=fraudworker:fraudworker src ./src
+COPY --chown=fraudworker:fraudworker alembic ./alembic
+COPY --chown=fraudworker:fraudworker alembic.ini ./alembic.ini
+
+USER 10002:10002
+STOPSIGNAL SIGTERM
+ENTRYPOINT ["python", "-m", "fraud_detection.deployment.worker"]
+CMD ["--help"]

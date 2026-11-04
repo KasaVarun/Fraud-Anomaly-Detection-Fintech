@@ -1,0 +1,82 @@
+{
+  "assumptions": {
+    "currency": "USD",
+    "hours_per_month": 730,
+    "location": "centralus",
+    "power_bi_and_copilot_licensing_excluded": true,
+    "price_basis": "Azure Retail Prices API queried 2026-11-01; estimates are not quotes",
+    "workload": "intermittent student demonstration with Container Apps scaled to zero and low Cosmos RU/storage usage"
+  },
+  "credit": {
+    "expiration": "2027-03-31",
+    "remaining_usd_user_reported": 100.0,
+    "spending_limit": "On"
+  },
+  "estimated_monthly_usd": {
+    "base_architecture_high": 67.0,
+    "base_architecture_low": 55.0,
+    "credit_duration_months_high": 1.82,
+    "credit_duration_months_low": 1.49
+  },
+  "gate_b_checks": [
+    "Reprice every resource in the approved subscription and final region before deployment.",
+    "Confirm exact private-endpoint hourly and processing prices.",
+    "Confirm Cosmos serverless/vector and Gremlin serverless availability for this student subscription.",
+    "Create budget alerts only after explicit Gate B mutation approval.",
+    "Tear down promptly after the demonstration to preserve student credit."
+  ],
+  "pricing_status": "authenticated_read_only_estimate",
+  "requires_explicit_gate_b_approval": true,
+  "resources": [
+    {
+      "category": "PostgreSQL Flexible Server",
+      "estimate_monthly_usd": 18.18,
+      "proposed_sku": "Burstable Standard_B1ms, PostgreSQL 16, 32 GiB, 7-day backup",
+      "rate_basis": "$0.01921/hour basic burstable compute plus $0.13/GiB-month storage"
+    },
+    {
+      "category": "Container Registry",
+      "estimate_monthly_usd": 5.0,
+      "proposed_sku": "Basic",
+      "rate_basis": "$0.1666/day plus excess storage/egress"
+    },
+    {
+      "category": "Container Apps API and Jobs",
+      "estimate_monthly_usd": "0-5 at light scale-to-zero usage",
+      "proposed_sku": "Consumption, min replicas 0, max replicas 1",
+      "rate_basis": "request, active/idle vCPU and GiB seconds; the current topology has no Container Apps private endpoint, dedicated/flexible workload profile, or planned maintenance",
+      "future_repricing_trigger": "Recalculate if a future design adds a Container Apps private endpoint, dedicated or flexible workload profile, planned maintenance, or another management-fee-triggering feature."
+    },
+    {
+      "category": "Cosmos DB NoSQL and Gremlin",
+      "estimate_monthly_usd": "3-10 for low steady usage; initial projection may spike",
+      "proposed_sku": "Two separate serverless accounts",
+      "rate_basis": "$0.282 per million serverless RUs plus $0.138/GiB-month storage"
+    },
+    {
+      "category": "Private endpoints",
+      "estimate_monthly_usd": 29.2,
+      "proposed_sku": "Four endpoints for Key Vault, NoSQL, Gremlin, and staging",
+      "rate_basis": "planning assumption of $0.01/hour per endpoint plus processed data; confirm before Gate B"
+    },
+    {
+      "category": "Operational artifact staging",
+      "estimate_monthly_usd": "less than 1 at 5-10 GiB plus operations",
+      "proposed_sku": "Private Standard_LRS StorageV2 with lifecycle expiration",
+      "rate_basis": "$0.0184/GiB-month hot LRS plus transactions"
+    },
+    {
+      "category": "Key Vault, Log Analytics, and Application Insights",
+      "estimate_monthly_usd": "0-5 at low operation and ingestion volume",
+      "proposed_sku": "Key Vault Standard; PerGB2018 logs with 30-day retention",
+      "rate_basis": "usage dependent; Key Vault operations listed at $0.03 per 10,000"
+    },
+    {
+      "category": "Power BI/Fabric and Copilot Studio",
+      "estimate_monthly_usd": "excluded",
+      "proposed_sku": "Existing eligible tenant capacity/licenses only",
+      "rate_basis": "separate licensing not proven by Azure discovery and not assumed affordable from the $100 Azure credit"
+    }
+  ],
+  "schema_version": "phase11-gate-b0-cost-review-v1"
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "phase11-gate-b-acceptance-v1",
+  "publication_policy": "No batch may publish until every required live-store reconciliation check passes.",
+  "checks": [
+    { "id": "https", "requirement": "HTTPS availability", "evidence": "TLS-only Container Apps URL and successful /health/live response" },
+    { "id": "auth", "requirement": "Authentication enforcement", "evidence": "Anonymous health succeeds; missing, expired, malformed, wrong-audience, wrong-tenant, and insufficient-scope /v1 requests fail" },
+    { "id": "postgres", "requirement": "PostgreSQL connectivity", "evidence": "Private TLS connection from migration job and API" },
+    { "id": "alembic", "requirement": "Alembic revision", "evidence": "alembic_version equals 20261031_0002" },
+    { "id": "views", "requirement": "Five reporting views", "evidence": "Exact names and columns match REPORTING_VIEW_COLUMNS" },
+    { "id": "artifact_staging", "requirement": "Private operational artifact staging", "evidence": "Manifest and every staged artifact hash/provenance match approved Phase 3/6/7 records; restricted source approval is explicit; Blob Storage is private and lifecycle-managed" },
+    { "id": "pipeline_jobs", "requirement": "Eleven manual private-network jobs", "evidence": "Every required stage exists, uses one managed identity and private endpoints, is bounded/observable, serializes with the advisory lock, and keeps publication separate" },
+    { "id": "raw", "requirement": "Cosmos raw projection", "evidence": "Exact published transaction ID set and /sender_id contract reconcile" },
+    { "id": "embedding", "requirement": "Embedding projection and vector search", "evidence": "384-dimensional versioned vectors reconcile and earlier-reference query succeeds" },
+    { "id": "gremlin", "requirement": "Gremlin projection and bounded traversal", "evidence": "Exact money/device/IP edge contracts and /pk partitions reconcile" },
+    { "id": "reconciliation", "requirement": "Cross-store reconciliation", "evidence": "Missing, orphaned, conflicting, invalid, duplicate, and reserved-test checks are zero" },
+    { "id": "publication", "requirement": "Controlled publication", "evidence": "Only an explicitly approved reconciled batch changes from pending to published" },
+    { "id": "dashboard", "requirement": "Published-only dashboard behavior", "evidence": "Pending facts remain invisible before and after controlled publication" },
+    { "id": "powerbi", "requirement": "Power BI freshness and reporting", "evidence": "Eligible Premium/Fabric capacity and VNet data gateway are proven, private PostgreSQL TLS/DNS succeeds, five views load, ten measures validate, and freshness matches PostgreSQL; otherwise record live service as blocked and use only an approved Desktop demonstration" },
+    { "id": "copilot_import", "requirement": "Copilot six-action Swagger 2.0 import", "evidence": "Deployment-specific investigator-actions.swagger.json imports exactly six OAuth 2.0 authorization-code/OBO-compatible GET actions with no write action or placeholders" },
+    { "id": "copilot_grounding", "requirement": "Copilot evidence-grounded response", "evidence": "Playbook response cites IDs, versions, freshness, warnings, and human review" },
+    { "id": "partial", "requirement": "Partial dependency behavior", "evidence": "Unavailable stores produce explicit partial/not_configured/unavailable states" },
+    { "id": "monitoring", "requirement": "Logging and monitoring", "evidence": "Request ID, status, latency, health, and sanitized dependency failures appear in Log Analytics" },
+    { "id": "secrets", "requirement": "No secrets in responses or logs", "evidence": "Automated recursive scan finds no tokens, keys, DSNs, vectors, or credentials" },
+    { "id": "counts", "requirement": "Database counts before and after", "evidence": "Approved counts recorded before migration, projection, publication, and final acceptance" },
+    { "id": "cost", "requirement": "Cost verification", "evidence": "Subscription-specific estimate, budget, tags, and actual cost check are approved" },
+    { "id": "teardown", "requirement": "Teardown verification", "evidence": "Preview lists only the explicit environment resource group and execution requires exact confirmation" }
+  ]
+}

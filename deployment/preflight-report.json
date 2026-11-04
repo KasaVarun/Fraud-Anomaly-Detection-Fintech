@@ -1,0 +1,248 @@
+{
+  "artifact_staging": {
+    "https_validation": "not_run_without_deployed_endpoint",
+    "private_dns_validation": "not_run_without_deployed_endpoint",
+    "private_route_availability": "not_configured",
+    "selected_upload_runner_type": "unselected",
+    "upload_status": "blocked_until_private_route_is_verified"
+  },
+  "azure": {
+    "authenticated": true,
+    "authorization_assessment": {
+      "app_registrations": "unknown_directory_permission_not_implied_by_azure_owner",
+      "resource_groups": "authorized_by_subscription_owner_role",
+      "role_assignments": "authorized_by_subscription_owner_role_subject_to_policy",
+      "service_resources": "authorized_by_subscription_owner_role_subject_to_policy_quota_and_provider_registration"
+    },
+    "available_subscriptions": [
+      {
+        "id": "[masked-id:af02]",
+        "is_default": true,
+        "name": "Azure for Students",
+        "state": "Enabled",
+        "tenant_id": "[masked-id:15e7]"
+      },
+      {
+        "id": "[masked-id:6711]",
+        "is_default": false,
+        "name": "SPS Shared Services",
+        "state": "Enabled",
+        "tenant_id": "[masked-id:15e7]"
+      }
+    ],
+    "budget_count": 0,
+    "capabilities": {
+      "container_apps": {
+        "all_required_types_advertised_in_allowed_regions": true,
+        "allowed_region_resource_type_support": {
+          "containerapps": [
+            "canadacentral",
+            "centralus",
+            "eastus",
+            "mexicocentral",
+            "southcentralus"
+          ],
+          "jobs": [
+            "canadacentral",
+            "centralus",
+            "eastus",
+            "mexicocentral",
+            "southcentralus"
+          ],
+          "managedenvironments": [
+            "canadacentral",
+            "centralus",
+            "eastus",
+            "mexicocentral",
+            "southcentralus"
+          ]
+        },
+        "provider_registration": "NotRegistered",
+        "quota_check": "blocked_until_provider_registration_is_explicitly_approved",
+        "status": "provider_not_registered"
+      },
+      "cosmos_specialized": {
+        "location_metadata_result": "CalledProcessError",
+        "provider_registration": "NotRegistered",
+        "returned_location_count": 0,
+        "serverless_gremlin": "unverified",
+        "serverless_nosql_vector": "unverified",
+        "status": "unresolved"
+      },
+      "postgresql_by_region": {
+        "canadacentral": {
+          "postgresql_16": true,
+          "reason": null,
+          "standard_b1ms": true,
+          "status": "supported"
+        },
+        "centralus": {
+          "postgresql_16": true,
+          "reason": null,
+          "standard_b1ms": true,
+          "status": "supported"
+        },
+        "eastus": {
+          "postgresql_16": false,
+          "reason": "Provisioning is restricted in this region. Please choose a different region. For exceptions to this rule please open a support request with Issue type of 'Service and subscription limits'.",
+          "standard_b1ms": false,
+          "status": "restricted"
+        },
+        "mexicocentral": {
+          "postgresql_16": true,
+          "reason": null,
+          "standard_b1ms": true,
+          "status": "supported"
+        },
+        "southcentralus": {
+          "postgresql_16": true,
+          "reason": null,
+          "standard_b1ms": true,
+          "status": "supported"
+        }
+      }
+    },
+    "default_subscription": {
+      "account_type": "user",
+      "id": "[masked-id:af02]",
+      "is_default": true,
+      "name": "Azure for Students",
+      "state": "Enabled"
+    },
+    "effective_role_discovery": {
+      "group_derived_roles": "included",
+      "identity_scope": "signed_in_identity",
+      "status": "verified"
+    },
+    "effective_roles": [
+      {
+        "assignment_count": 2,
+        "role": "Owner",
+        "scope": "selected_subscription_or_inherited"
+      }
+    ],
+    "installed_extensions": [
+      {
+        "name": "containerapp",
+        "version": "1.3.0b5"
+      }
+    ],
+    "name_availability": {
+      "container_registry_candidate": "available",
+      "cosmos_gremlin_candidate": "available",
+      "cosmos_nosql_candidate": "available",
+      "final_names": "not_selected",
+      "key_vault_candidate": "available",
+      "storage_candidate": "unknown:CalledProcessError"
+    },
+    "policies": {
+      "allowed_locations": [
+        "canadacentral",
+        "centralus",
+        "eastus",
+        "mexicocentral",
+        "southcentralus"
+      ],
+      "assignments": [
+        "ASC Default (subscription: [masked-id:af02])",
+        "Allowed resource deployment regions"
+      ]
+    },
+    "provider_registration": {
+      "Microsoft.App": "NotRegistered",
+      "Microsoft.ContainerRegistry": "NotRegistered",
+      "Microsoft.DBforPostgreSQL": "NotRegistered",
+      "Microsoft.DocumentDB": "NotRegistered",
+      "Microsoft.Insights": "Registered",
+      "Microsoft.KeyVault": "NotRegistered",
+      "Microsoft.ManagedIdentity": "NotRegistered",
+      "Microsoft.Network": "NotRegistered",
+      "Microsoft.OperationalInsights": "NotRegistered",
+      "Microsoft.Storage": "NotRegistered"
+    },
+    "required_extension_status": {
+      "containerapp": "installed"
+    },
+    "required_extensions": [
+      "containerapp"
+    ],
+    "resource_inventory": {
+      "project_resource_count": 0,
+      "project_resource_group_count": 0,
+      "project_resource_groups": [],
+      "project_resources": [],
+      "total_resource_count": 0,
+      "total_resource_group_count": 0
+    },
+    "status": "authenticated_read_only",
+    "subscription_offer": {
+      "location_placement": "Public_2014-09-01",
+      "quota_offer": "AzureForStudents_2018-01-01",
+      "spending_limit": "On",
+      "state": "Enabled"
+    },
+    "tenant_id": "[masked-id:15e7]"
+  },
+  "candidate_regions": {
+    "candidates_allowed_by_policy": [
+      "canadacentral",
+      "centralus",
+      "eastus",
+      "mexicocentral",
+      "southcentralus"
+    ],
+    "recommended_for_parameter_review": "centralus",
+    "status": "provisional_pending_cosmos_and_container_apps_quota_checks"
+  },
+  "cloud_mutations_performed": false,
+  "copilot_studio": {
+    "authentication": "not_detectable",
+    "licensing": "unknown",
+    "power_platform_environment": "unknown"
+  },
+  "generated_at": "2026-11-01T14:26:50.763603+00:00",
+  "mode": "authenticated_read_only",
+  "power_bi": {
+    "authentication": "not_detectable",
+    "fabric_or_premium_capacity_availability": "unknown",
+    "licensing": "unknown",
+    "live_service_deployment_status": "blocked_pending_capacity_workspace_and_vnet_gateway_validation",
+    "vnet_data_gateway_availability": "unknown",
+    "workspace_availability": "unknown"
+  },
+  "required_user_actions": [
+    "Approve a policy-allowed region after reviewing the authenticated cost evidence.",
+    "Explicitly approve any future provider registration before specialized quota validation.",
+    "Confirm Power BI/Fabric capacity and VNet data gateway entitlement or accept the Desktop-only fallback.",
+    "Confirm Copilot Studio licensing and an eligible Power Platform environment.",
+    "Select and prove a private artifact upload route before any upload."
+  ],
+  "schema_version": "phase11-gate-b0-read-only-preflight-v1",
+  "tools": {
+    "azure_cli": {
+      "error": null,
+      "installed": true,
+      "version": {
+        "azure-cli": "2.91.0",
+        "azure-cli-core": "2.91.0",
+        "azure-cli-telemetry": "1.1.0",
+        "extensions": {
+          "containerapp": "1.3.0b5"
+        }
+      }
+    },
+    "docker": {
+      "installed": true
+    },
+    "power_bi_tooling": {
+      "installed": false
+    },
+    "power_platform_cli": {
+      "installed": false
+    }
+  },
+  "what_if": {
+    "executed": false,
+    "reason": "Gate B0 permits authenticated read-only discovery only."
+  }
+}
