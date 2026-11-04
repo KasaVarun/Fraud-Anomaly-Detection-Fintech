@@ -9,6 +9,63 @@ embeddings, immutable model releases, locked incremental scoring, and the publis
 investigator API. Raw data remains ignored. Phase 10 reporting/Copilot work is represented by
 deterministic local contracts; Azure deployment remains unimplemented.
 
+## System design
+
+### Architecture diagram
+
+![Fraud detection system architecture](docs/images/fraud-detection-architecture.png)
+
+The solution uses a hybrid local/Azure architecture:
+
+- **Ingestion:** Python validates PaySim records, creates stable event IDs, enriches device/IP
+  evidence deterministically, and supports both the initial load and chronological incremental
+  batches.
+- **System of record:** Azure PostgreSQL stores accounts, transactions, labels, model versions,
+  scores, flags, graph snapshots, risk profiles, batch status, and published reporting views.
+- **Specialized evidence stores:** Cosmos DB for NoSQL retains raw source documents and 384-value
+  MiniLM behavior embeddings. Cosmos DB for Gremlin represents accounts, merchants, devices, IPs,
+  and transaction relationships for graph analysis.
+- **Detection:** Python combines tabular, historical graph, and vector features. The approved model
+  workflow trains locally and uses a versioned LightGBM model and locked decision threshold for
+  scoring.
+- **Consumption:** Power BI reads published SQL views. FastAPI exposes only allowlisted, read-only
+  investigation queries, and Copilot Studio uses those API actions to return evidence-backed
+  answers with IDs, model version, and data freshness.
+- **Publication safety:** A batch is exposed only after required IDs, counts, and versions reconcile
+  across stores. A failed batch leaves the previous published view available.
+
+Solid arrows in the diagram show processing and published reporting. Dashed purple arrows show
+read-only evidence retrieval. Azure deployment is intentionally paused, so the repository currently
+provides local implementations, contracts, tests, and deployment-readiness assets without creating
+billable cloud resources.
+
+### Database design ERD
+
+![Fraud detection database entity relationship diagram](docs/images/database-erd.png)
+
+The design uses three connected data models, each selected for a different job:
+
+- **Relational PostgreSQL:** `INGESTION_BATCH` contains many `TRANSACTION` records. Each transaction
+  has one sender and one receiver `ACCOUNT`, may have a `TRANSACTION_LABEL`, and can have multiple
+  versioned `TRANSACTION_SCORE` records. A score may raise one `FRAUD_FLAG`. `MODEL_VERSION` and
+  `MODEL_EVALUATION` preserve reproducibility, while `GRAPH_SNAPSHOT`, `COMMUNITY`, and
+  `ACCOUNT_RISK_PROFILE` preserve time-bounded network evidence. `MERCHANT` is an optional subtype
+  of `ACCOUNT`.
+- **Document and vector Cosmos DB:** Every `transactions_raw` document uses the same stable
+  transaction ID as PostgreSQL and keeps the original source payload and provenance. A transaction
+  can have multiple versioned `behavior_embeddings`; each embedding references its raw document
+  and stores a 384-dimensional MiniLM vector.
+- **Gremlin graph:** Account and merchant vertices reuse relational account IDs. Transaction edges
+  reuse transaction IDs and connect the source and target accounts. Device and IP vertices capture
+  shared-use patterns through `USES_DEVICE` and `USES_IP` relationships.
+
+Stable IDs connect the relational, document, vector, and graph layers without duplicating business
+identity. Solid gray relationships are enforced SQL foreign keys, dashed purple relationships are
+cross-store application references, and solid purple relationships are graph edges. The editable
+source is in [`docs/approved-design/Fraud_Detection_Diagrams.drawio`](docs/approved-design/Fraud_Detection_Diagrams.drawio),
+and the full two-page design is available in
+[`docs/approved-design/Fraud_Detection_Architecture_and_ERD.pdf`](docs/approved-design/Fraud_Detection_Architecture_and_ERD.pdf).
+
 ## Prerequisites
 
 - Python 3.12
